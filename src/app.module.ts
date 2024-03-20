@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArtistController } from './artist/artist.controller';
@@ -15,6 +17,10 @@ import { TrackService } from './track/track.service';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '/artist/uploads'),
+      serveRoot: '/static',
+    }),
     MongooseModule.forRoot(config.mongoose.db),
     MongooseModule.forFeature([
       { name: Artist.name, schema: ArtistSchema },

@@ -3,3 +3,9 @@ export class CreateArtistDto {
   photo: string;
   info: string;
 }
+
+export interface ArtistRequest {
+  name: string;
+  photo: File | null;
+  info: string;
+}

@@ -7,11 +7,16 @@ import {
   Param,
   Post,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import mongoose from 'mongoose';
+import { extname } from 'path';
+import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ArtistService } from './artist.service';
-import { CreateArtistDto } from './create-artist.dto';
+import { ArtistRequest, CreateArtistDto } from './create-artist.dto';
 
 @Controller('artists')
 export class ArtistController {
@@ -27,9 +32,29 @@ export class ArtistController {
   }
 
   @Post()
-  async createOne(@Body() data: CreateArtistDto, @Res() res: Response) {
+  @UseInterceptors(
+    FileInterceptor('photo', {
+      storage: diskStorage({
+        destination: __dirname + '/uploads',
+        filename: (req, file, cb) => {
+          const randomName = crypto.randomUUID();
+          return cb(null, `${randomName}.${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async createOne(
+    @Body() data: ArtistRequest,
+    @Res() res: Response,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     try {
-      const answer = await this.artistService.createOne(data);
+      const dataForSave: CreateArtistDto = {
+        name: data.name,
+        info: data.info,
+        photo: file ? `/uploads/artist/${file.filename}` : null,
+      };
+      const answer = await this.artistService.createOne(dataForSave);
       return res.status(HttpStatus.CREATED).json(answer);
     } catch (error) {
       if (error instanceof mongoose.Error.ValidationError) {

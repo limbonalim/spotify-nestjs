@@ -8,11 +8,16 @@ import {
   Post,
   Query,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import { AlbumService } from './album.service';
-import { CreateAlbumDto } from './create-album.dto';
+import { AlbumRequest } from './create-album.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('albums')
 export class AlbumController {
@@ -28,9 +33,29 @@ export class AlbumController {
   }
 
   @Post()
-  async createOne(@Body() data: CreateAlbumDto, @Res() res: Response) {
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: __dirname + '/uploads',
+        filename: (req, file, cb) => {
+          const randomName = crypto.randomUUID();
+          return cb(null, `${randomName}.${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async createOne(
+    @Body() data: AlbumRequest,
+    @Res() res: Response,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     try {
-      const answer = await this.albumService.createOne(data);
+      const answer = await this.albumService.createOne({
+        title: data.title,
+        year: data.year,
+        image: file ? `/uploads/artist/${file.filename}` : null,
+        artist: data.artist,
+      });
       return res.status(HttpStatus.CREATED).json(answer);
     } catch (error) {
       if (error instanceof mongoose.Error.ValidationError) {
