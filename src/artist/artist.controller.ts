@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import mongoose from 'mongoose';
-import { extname } from 'path';
+import { extname, join } from 'path';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ArtistService } from './artist.service';
@@ -35,10 +35,10 @@ export class ArtistController {
   @UseInterceptors(
     FileInterceptor('photo', {
       storage: diskStorage({
-        destination: __dirname + '/uploads',
+        destination: join(__dirname, '..', '..', '/public/uploads/artists'),
         filename: (req, file, cb) => {
           const randomName = crypto.randomUUID();
-          return cb(null, `${randomName}.${extname(file.originalname)}`);
+          return cb(null, `${randomName}${extname(file.originalname)}`);
         },
       }),
     }),
@@ -52,7 +52,7 @@ export class ArtistController {
       const dataForSave: CreateArtistDto = {
         name: data.name,
         info: data.info,
-        photo: file ? `/uploads/artist/${file.filename}` : null,
+        photo: file ? `/uploads/artists/${file.filename}` : null,
       };
       const answer = await this.artistService.createOne(dataForSave);
       return res.status(HttpStatus.CREATED).json(answer);

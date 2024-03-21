@@ -17,7 +17,7 @@ import { AlbumService } from './album.service';
 import { AlbumRequest } from './create-album.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
 
 @Controller('albums')
 export class AlbumController {
@@ -36,10 +36,10 @@ export class AlbumController {
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: __dirname + '/uploads',
+        destination: join(__dirname, '..', '..', '/public/uploads/albums'),
         filename: (req, file, cb) => {
           const randomName = crypto.randomUUID();
-          return cb(null, `${randomName}.${extname(file.originalname)}`);
+          return cb(null, `${randomName}${extname(file.originalname)}`);
         },
       }),
     }),
@@ -53,7 +53,7 @@ export class AlbumController {
       const answer = await this.albumService.createOne({
         title: data.title,
         year: data.year,
-        image: file ? `/uploads/artist/${file.filename}` : null,
+        image: file ? `/uploads/albums/${file.filename}` : null,
         artist: data.artist,
       });
       return res.status(HttpStatus.CREATED).json(answer);
