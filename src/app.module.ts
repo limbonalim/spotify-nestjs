@@ -12,6 +12,8 @@ import { AlbumController } from './album/album.controller';
 import { AlbumService } from './album/album.service';
 import { TrackController } from './track/track.controller';
 import { TrackService } from './track/track.service';
+import { User, UserSchema } from './schemas/user.schema';
+import { UserController } from './user/user.controller';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { TrackService } from './track/track.service';
       { name: Artist.name, schema: ArtistSchema },
       { name: Album.name, schema: AlbumSchema },
       { name: Track.name, schema: TrackSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [
@@ -27,6 +30,7 @@ import { TrackService } from './track/track.service';
     ArtistController,
     AlbumController,
     TrackController,
+    UserController,
   ],
   providers: [AppService, ArtistService, AlbumService, TrackService],
 })
