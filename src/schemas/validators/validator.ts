@@ -1,4 +1,10 @@
-import { ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, registerDecorator, ValidationArguments } from 'class-validator';
+import {
+  ValidationOptions,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  registerDecorator,
+  ValidationArguments,
+} from 'class-validator';
 import { Types } from 'mongoose';
 
 @ValidatorConstraint({ name: 'isValidObjectId', async: false })
