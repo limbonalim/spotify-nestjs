@@ -8,11 +8,13 @@ import {
   Post,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import { CreateTrackDto } from './create-track.dto';
 import { TrackService } from './track.service';
+import { TokenAuthGuard } from '../auth/token-auth.guard';
 
 @Controller('tracks')
 export class TrackController {
@@ -27,6 +29,7 @@ export class TrackController {
     return this.trackService.getOne(id);
   }
 
+  @UseGuards(TokenAuthGuard)
   @Post()
   async createOne(@Body() data: CreateTrackDto, @Res() res: Response) {
     try {

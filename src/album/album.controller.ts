@@ -9,6 +9,7 @@ import {
   Query,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -18,6 +19,7 @@ import { AlbumRequest } from './create-album.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
+import { TokenAuthGuard } from '../auth/token-auth.guard';
 
 @Controller('albums')
 export class AlbumController {
@@ -32,6 +34,7 @@ export class AlbumController {
     return this.albumService.getOne(id);
   }
 
+  @UseGuards(TokenAuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('image', {

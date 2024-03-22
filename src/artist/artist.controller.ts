@@ -8,6 +8,7 @@ import {
   Post,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -17,6 +18,7 @@ import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ArtistService } from './artist.service';
 import { ArtistRequest, CreateArtistDto } from './create-artist.dto';
+import { TokenAuthGuard } from '../auth/token-auth.guard';
 
 @Controller('artists')
 export class ArtistController {
@@ -31,6 +33,7 @@ export class ArtistController {
     return this.artistService.getOne(id);
   }
 
+  @UseGuards(TokenAuthGuard)
   @Post()
   @UseInterceptors(
     FileInterceptor('photo', {
