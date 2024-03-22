@@ -14,10 +14,16 @@ import { TrackController } from './track/track.controller';
 import { TrackService } from './track/track.service';
 import { User, UserSchema } from './schemas/user.schema';
 import { UserController } from './user/user.controller';
+import { AuthService } from './auth/auth.service';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './auth/local.strategy';
+import { TokenAuthGuard } from './auth/token-auth.guard';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
     MongooseModule.forRoot(config.mongoose.db),
+    PassportModule,
     MongooseModule.forFeature([
       { name: Artist.name, schema: ArtistSchema },
       { name: Album.name, schema: AlbumSchema },
@@ -32,6 +38,15 @@ import { UserController } from './user/user.controller';
     TrackController,
     UserController,
   ],
-  providers: [AppService, ArtistService, AlbumService, TrackService],
+  providers: [
+    AppService,
+    ArtistService,
+    AlbumService,
+    TrackService,
+    UserService,
+    AuthService,
+    LocalStrategy,
+    TokenAuthGuard,
+  ],
 })
 export class AppModule {}
