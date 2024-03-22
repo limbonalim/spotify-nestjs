@@ -37,6 +37,7 @@ export class UserService {
     }
 
     user.generateToken();
+    await user.save();
     return success;
   }
 }
