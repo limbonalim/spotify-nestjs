@@ -19,6 +19,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ArtistService } from './artist.service';
 import { ArtistRequest, CreateArtistDto } from './create-artist.dto';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
+import { PermitGard } from '../auth/permit-auth.guard';
+import { Roles } from '../schemas/user.schema';
 
 @Controller('artists')
 export class ArtistController {
@@ -70,7 +72,7 @@ export class ArtistController {
         .json({ message: 'Internal Server Error' });
     }
   }
-
+  @UseGuards(PermitGard(Roles.admin))
   @Delete(':id')
   async deleteOne(@Param('id') id: string) {
     return this.artistService.deleteOne(id);

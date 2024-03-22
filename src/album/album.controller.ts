@@ -20,6 +20,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
+import { PermitGard } from '../auth/permit-auth.guard';
+import { Roles } from '../schemas/user.schema';
 
 @Controller('albums')
 export class AlbumController {
@@ -72,6 +74,7 @@ export class AlbumController {
     }
   }
 
+  @UseGuards(PermitGard(Roles.admin))
   @Delete(':id')
   async deleteOne(@Param('id') id: string) {
     return this.albumService.deleteOne(id);

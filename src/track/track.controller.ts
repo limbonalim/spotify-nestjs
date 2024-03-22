@@ -15,6 +15,8 @@ import mongoose from 'mongoose';
 import { CreateTrackDto } from './create-track.dto';
 import { TrackService } from './track.service';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
+import { PermitGard } from '../auth/permit-auth.guard';
+import { Roles } from '../schemas/user.schema';
 
 @Controller('tracks')
 export class TrackController {
@@ -47,6 +49,7 @@ export class TrackController {
     }
   }
 
+  @UseGuards(PermitGard(Roles.admin))
   @Delete(':id')
   async deleteOne(@Param('id') id: string) {
     return this.trackService.deleteOne(id);
